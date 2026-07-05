@@ -1,0 +1,22 @@
+package com.example.coursemanagement.services;
+
+import com.example.coursemanagement.models.Enrollment;
+import com.example.coursemanagement.repositories.EnrollmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class EnrollmentService {
+    private final EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    public EnrollmentService(EnrollmentRepository enrollmentRepository) {
+        this.enrollmentRepository = enrollmentRepository;
+    }
+
+    public List<Enrollment> getAllEnrollments() {
+        return enrollmentRepository.findAll();
+    }
+}
