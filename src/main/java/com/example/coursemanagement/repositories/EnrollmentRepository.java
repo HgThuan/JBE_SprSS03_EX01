@@ -1,5 +1,6 @@
 package com.example.coursemanagement.repositories;
 
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Enrollment;
 import org.springframework.stereotype.Repository;
 
@@ -32,21 +33,19 @@ public class EnrollmentRepository {
     }
 
     public Enrollment update(Long id, Enrollment updatedEnrollment) {
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getId().equals(id)) {
-                enrollment.setStudentName(updatedEnrollment.getStudentName());
-                enrollment.setCourseId(updatedEnrollment.getCourseId());
-                return enrollment;
-            }
-        }
-        return null;
+        Enrollment enrollment = findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found with id: " + id));
+        
+        enrollment.setStudentName(updatedEnrollment.getStudentName());
+        enrollment.setCourseId(updatedEnrollment.getCourseId());
+        return enrollment;
     }
 
     public Enrollment deleteById(Long id) {
-        Enrollment enrollment = findById(id).orElse(null);
-        if (enrollment != null) {
-            enrollments.remove(enrollment);
-        }
+        Enrollment enrollment = findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found with id: " + id));
+        
+        enrollments.remove(enrollment);
         return enrollment;
     }
 }

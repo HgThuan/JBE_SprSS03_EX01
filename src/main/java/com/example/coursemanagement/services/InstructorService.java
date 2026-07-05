@@ -1,5 +1,6 @@
 package com.example.coursemanagement.services;
 
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Instructor;
 import com.example.coursemanagement.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class InstructorService {
     }
 
     public Instructor getInstructorById(Long id) {
-        return instructorRepository.findById(id).orElse(null);
+        return instructorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Instructor not found with id: " + id));
     }
 
     public Instructor createInstructor(Instructor instructor) {

@@ -1,6 +1,7 @@
 package com.example.coursemanagement.controllers;
 
 import com.example.coursemanagement.dto.ApiResponse;
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Course;
 import com.example.coursemanagement.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,12 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Course>> getCourseById(@PathVariable Long id) {
-        Course course = courseService.getCourseById(id);
-        if (course != null) {
+        try {
+            Course course = courseService.getCourseById(id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Course found", course));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Course not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 
@@ -46,23 +47,23 @@ public class CourseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Course>> updateCourse(@PathVariable Long id, @RequestBody Course course) {
-        Course updated = courseService.updateCourse(id, course);
-        if (updated != null) {
+        try {
+            Course updated = courseService.updateCourse(id, course);
             return ResponseEntity.ok(new ApiResponse<>(true, "Course updated successfully", updated));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Course not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCourse(@PathVariable Long id) {
-        Course deleted = courseService.deleteCourseById(id);
-        if (deleted != null) {
+        try {
+            courseService.deleteCourseById(id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Course deleted successfully", null));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Course not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 }

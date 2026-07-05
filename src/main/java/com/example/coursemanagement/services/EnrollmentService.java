@@ -1,5 +1,6 @@
 package com.example.coursemanagement.services;
 
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Enrollment;
 import com.example.coursemanagement.repositories.EnrollmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class EnrollmentService {
     }
 
     public Enrollment getEnrollmentById(Long id) {
-        return enrollmentRepository.findById(id).orElse(null);
+        return enrollmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found with id: " + id));
     }
 
     public Enrollment createEnrollment(Enrollment enrollment) {

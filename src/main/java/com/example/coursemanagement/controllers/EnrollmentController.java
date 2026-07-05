@@ -1,6 +1,7 @@
 package com.example.coursemanagement.controllers;
 
 import com.example.coursemanagement.dto.ApiResponse;
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Enrollment;
 import com.example.coursemanagement.services.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,12 @@ public class EnrollmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Enrollment>> getEnrollmentById(@PathVariable Long id) {
-        Enrollment enrollment = enrollmentService.getEnrollmentById(id);
-        if (enrollment != null) {
+        try {
+            Enrollment enrollment = enrollmentService.getEnrollmentById(id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Enrollment found", enrollment));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Enrollment not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 
@@ -46,23 +47,23 @@ public class EnrollmentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Enrollment>> updateEnrollment(@PathVariable Long id, @RequestBody Enrollment enrollment) {
-        Enrollment updated = enrollmentService.updateEnrollment(id, enrollment);
-        if (updated != null) {
+        try {
+            Enrollment updated = enrollmentService.updateEnrollment(id, enrollment);
             return ResponseEntity.ok(new ApiResponse<>(true, "Enrollment updated successfully", updated));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Enrollment not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteEnrollment(@PathVariable Long id) {
-        Enrollment deleted = enrollmentService.deleteEnrollmentById(id);
-        if (deleted != null) {
+        try {
+            enrollmentService.deleteEnrollmentById(id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Enrollment deleted successfully", null));
-        } else {
+        } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(false, "Enrollment not found", null));
+                    .body(new ApiResponse<>(false, ex.getMessage(), null));
         }
     }
 }

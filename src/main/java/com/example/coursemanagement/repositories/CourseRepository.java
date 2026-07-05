@@ -1,5 +1,6 @@
 package com.example.coursemanagement.repositories;
 
+import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Course;
 import org.springframework.stereotype.Repository;
 
@@ -32,22 +33,20 @@ public class CourseRepository {
     }
 
     public Course update(Long id, Course updatedCourse) {
-        for (Course course : courses) {
-            if (course.getId().equals(id)) {
-                course.setTitle(updatedCourse.getTitle());
-                course.setStatus(updatedCourse.getStatus());
-                course.setInstructorId(updatedCourse.getInstructorId());
-                return course;
-            }
-        }
-        return null;
+        Course course = findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+        
+        course.setTitle(updatedCourse.getTitle());
+        course.setStatus(updatedCourse.getStatus());
+        course.setInstructorId(updatedCourse.getInstructorId());
+        return course;
     }
 
     public Course deleteById(Long id) {
-        Course course = findById(id).orElse(null);
-        if (course != null) {
-            courses.remove(course);
-        }
+        Course course = findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+        
+        courses.remove(course);
         return course;
     }
 }
