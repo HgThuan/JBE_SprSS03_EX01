@@ -1,6 +1,7 @@
 package com.example.coursemanagement.controllers;
 
 import com.example.coursemanagement.dto.ApiResponse;
+import com.example.coursemanagement.dto.InstructorDetail;
 import com.example.coursemanagement.exceptions.ResourceNotFoundException;
 import com.example.coursemanagement.models.Instructor;
 import com.example.coursemanagement.services.InstructorService;
@@ -25,6 +26,12 @@ public class InstructorController {
     public ResponseEntity<ApiResponse<List<Instructor>>> getInstructors() {
         List<Instructor> data = instructorService.getAllInstructors();
         return ResponseEntity.ok(new ApiResponse<>(true, "Fetched all instructors successfully", data));
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<ApiResponse<List<InstructorDetail>>> getInstructorDetails() {
+        List<InstructorDetail> data = instructorService.getInstructorDetails();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Fetched instructor details successfully", data));
     }
 
     @GetMapping("/{id}")
