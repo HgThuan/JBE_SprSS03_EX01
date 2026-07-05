@@ -5,10 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CourseRepository {
     private final List<Course> courses = new ArrayList<>();
+    private Long nextId = 3L;
 
     public CourseRepository() {
         courses.add(new Course(1L, "Spring Boot Basics", "Active", 1L));
@@ -17,5 +19,35 @@ public class CourseRepository {
 
     public List<Course> findAll() {
         return courses;
+    }
+
+    public Optional<Course> findById(Long id) {
+        return courses.stream().filter(c -> c.getId().equals(id)).findFirst();
+    }
+
+    public Course create(Course course) {
+        course.setId(nextId++);
+        courses.add(course);
+        return course;
+    }
+
+    public Course update(Long id, Course updatedCourse) {
+        for (Course course : courses) {
+            if (course.getId().equals(id)) {
+                course.setTitle(updatedCourse.getTitle());
+                course.setStatus(updatedCourse.getStatus());
+                course.setInstructorId(updatedCourse.getInstructorId());
+                return course;
+            }
+        }
+        return null;
+    }
+
+    public Course deleteById(Long id) {
+        Course course = findById(id).orElse(null);
+        if (course != null) {
+            courses.remove(course);
+        }
+        return course;
     }
 }
